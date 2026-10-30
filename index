@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparatives in Proverbs</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #2c4a2e;
+    --forest-mid: #3d6b40;
+    --gold: #b8922a;
+    --gold-light: #f0d98a;
+    --parchment: #f7f2e8;
+    --cream: #fdfaf4;
+    --ink: #1a1a14;
+    --muted: #7a7a60;
+    --line: #ddd8c4;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--parchment);
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* Subtle texture via repeating gradient */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(180,160,100,0.06) 28px,
+      rgba(180,160,100,0.06) 29px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  header {
+    background: var(--forest);
+    padding: 52px 24px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '"';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 280px;
+    color: rgba(255,255,255,0.04);
+    top: -60px;
+    left: -20px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  header::after {
+    content: '"';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 280px;
+    color: rgba(255,255,255,0.04);
+    bottom: -120px;
+    right: -20px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .header-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-label {
+    display: inline-block;
+    border: 1.5px solid rgba(184,146,42,0.6);
+    color: var(--gold-light);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--white);
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  header p {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.92rem;
+    margin-top: 12px;
+    font-weight: 500;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    max-width: 520px;
+    margin: 20px auto 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 99px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.72rem;
+    margin-top: 7px;
+    font-weight: 500;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 20px 8px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ctrl {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 7px 18px;
+    border-radius: 3px;
+    border: 1.5px solid var(--line);
+    background: var(--cream);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ctrl:hover { border-color: var(--forest-mid); color: var(--forest); }
+  .ctrl.primary { background: var(--forest); color: white; border-color: var(--forest); }
+  .ctrl.primary:hover { background: var(--forest-mid); }
+
+  /* Main container */
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px 20px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Proverb card */
+  .proverb-card {
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(44,74,46,0.06);
+    transition: box-shadow 0.2s;
+  }
+
+  .proverb-card:hover { box-shadow: 0 4px 20px rgba(44,74,46,0.1); }
+
+  .card-front {
+    padding: 28px 30px 24px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .proverb-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.15rem, 2.5vw, 1.4rem);
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .proverb-text .comp {
+    font-style: italic;
+    color: var(--forest-mid);
+    font-weight: 700;
+  }
+
+  .reveal-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .reveal-hint svg {
+    width: 14px; height: 14px;
+    transition: transform 0.3s;
+  }
+
+  .proverb-card.open .reveal-hint svg {
+    transform: rotate(180deg);
+  }
+
+  /* Translation panel */
+  .card-back {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 0px solid var(--line);
+  }
+
+  .proverb-card.open .card-back {
+    max-height: 300px;
+    border-top-width: 1.5px;
+  }
+
+  .card-back-inner {
+    padding: 20px 30px 24px;
+    background: var(--forest);
+  }
+
+  .translation-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .translation-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .discussion-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .discussion-q {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* Mark known */
+  .mark-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .mark-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 3px;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mark-got {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(184,146,42,0.6);
+    color: var(--gold-light);
+  }
+
+  .mark-got:hover { background: rgba(184,146,42,0.2); }
+
+  .mark-not {
+    background: transparent;
+    border-color: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.5);
+  }
+
+  .mark-not:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.7); }
+
+  /* Known state */
+  .proverb-card.known {
+    opacity: 0.5;
+    border-color: var(--gold);
+  }
+
+  .proverb-card.known .card-num::after {
+    content: ' ✓';
+    color: var(--gold);
+  }
+
+  /* Score row */
+  .score-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .score-chip {
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 3px;
+    padding: 7px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--ink);
+  }
+
+  .score-chip .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  footer {
+    text-align: center;
+    padding: 50px 20px 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 480px) {
+    .card-front, .card-back-inner { padding: 20px; }
+    header { padding: 36px 16px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-label">Comparatives · A1/A2 · Speaking</div>
+    <h1>Wisdom in <em>comparison</em></h1>
+    <p>English proverbs using comparatives · tap each one to reveal the Spanish</p>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 of 8 studied</div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <button class="ctrl primary" onclick="openAll()">Open all</button>
+  <button class="ctrl" onclick="closeAll()">Close all</button>
+  <button class="ctrl" onclick="resetKnown()">↺ Reset</button>
+</div>
+
+<div class="container">
+
+  <div class="score-row">
+    <div class="score-chip"><span class="dot" style="background:var(--gold)"></span>Known: <b id="knownCount">0</b></div>
+    <div class="score-chip"><span class="dot" style="background:var(--forest-mid)"></span>Studying: <b id="studyingCount">8</b></div>
+  </div>
+
+  <div id="cards"></div>
+</div>
+
+<footer>English File Elementary · A1/A2 Adults · Comparatives · Saturday Course</footer>
+
+<script>
+const proverbs = [
+  {
+    en: "Better <span class='comp'>late</span> than never.",
+    es: "Más vale tarde que nunca.",
+    discussion: "Can you think of a time when you arrived late but it was still worth it?"
+  },
+  {
+    en: "The grass is always <span class='comp'>greener</span> on the other side.",
+    es: "El pasto siempre es más verde del otro lado.",
+    discussion: "Do you ever think other people's lives are better than yours? Is it true?"
+  },
+  {
+    en: "Two heads are <span class='comp'>better</span> than one.",
+    es: "Dos cabezas piensan mejor que una.",
+    discussion: "Do you prefer working alone or with others? Why?"
+  },
+  {
+    en: "Actions speak <span class='comp'>louder</span> than words.",
+    es: "Los hechos hablan más fuerte que las palabras.",
+    discussion: "Can you think of someone whose actions are more important than what they say?"
+  },
+  {
+    en: "It's <span class='comp'>easier</span> said than done.",
+    es: "Del dicho al hecho hay un gran trecho.",
+    discussion: "What is something that sounds easy but is actually very difficult?"
+  },
+  {
+    en: "Prevention is <span class='comp'>better</span> than cure.",
+    es: "Más vale prevenir que curar.",
+    discussion: "Do you take care of your health to prevent illness, or only go to the doctor when you're sick?"
+  },
+  {
+    en: "The pen is <span class='comp'>mightier</span> than the sword.",
+    es: "La pluma es más poderosa que la espada.",
+    discussion: "Do you think words and ideas are more powerful than violence? Give an example."
+  },
+  {
+    en: "<span class='comp'>Better</span> safe than sorry.",
+    es: "Mejor prevenir que lamentar.",
+    discussion: "Are you a careful person or do you take risks? Give an example from your life."
+  },
+];
+
+let known = new Set();
+
+function renderCards() {
+  const container = document.getElementById('cards');
+  container.innerHTML = proverbs.map((p, i) => `
+    <div class="proverb-card ${known.has(i) ? 'known' : ''}" id="card-${i}">
+      <div class="card-front" onclick="toggleCard(${i})">
+        <span class="card-num">Proverb ${i + 1}</span>
+        <div class="proverb-text">${p.en}</div>
+        <div class="reveal-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+          tap to reveal Spanish
+        </div>
+      </div>
+      <div class="card-back">
+        <div class="card-back-inner">
+          <span class="translation-label">Spanish translation</span>
+          <div class="translation-text">${p.es}</div>
+          <span class="discussion-label">Discuss with your partner</span>
+          <div class="discussion-q">${p.discussion}</div>
+          <div class="mark-row">
+            <button class="mark-btn mark-got" onclick="markKnown(event,${i})">✓ I know this one</button>
+            <button class="mark-btn mark-not" onclick="markStudying(event,${i})">Still studying</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  updateScore();
+}
+
+function toggleCard(i) {
+  const card = document.getElementById(`card-${i}`);
+  card.classList.toggle('open');
+  const hint = card.querySelector('.reveal-hint');
+  if (card.classList.contains('open')) {
+    hint.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> tap to close`;
+  } else {
+    hint.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> tap to reveal Spanish`;
+  }
+}
+
+function markKnown(e, i) {
+  e.stopPropagation();
+  known.add(i);
+  document.getElementById(`card-${i}`).classList.add('known');
+  updateScore();
+}
+
+function markStudying(e, i) {
+  e.stopPropagation();
+  known.delete(i);
+  document.getElementById(`card-${i}`).classList.remove('known');
+  updateScore();
+}
+
+function updateScore() {
+  const k = known.size;
+  document.getElementById('knownCount').textContent = k;
+  document.getElementById('studyingCount').textContent = proverbs.length - k;
+  const pct = (k / proverbs.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${k} of ${proverbs.length} studied`;
+}
+
+function openAll() {
+  proverbs.forEach((_, i) => {
+    const card = document.getElementById(`card-${i}`);
+    card.classList.add('open');
+    const hint = card.querySelector('.reveal-hint');
+    hint.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> tap to close`;
+  });
+}
+
+function closeAll() {
+  proverbs.forEach((_, i) => {
+    const card = document.getElementById(`card-${i}`);
+    card.classList.remove('open');
+    const hint = card.querySelector('.reveal-hint');
+    hint.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> tap to reveal Spanish`;
+  });
+}
+
+function resetKnown() {
+  known.clear();
+  document.querySelectorAll('.proverb-card').forEach(c => c.classList.remove('known'));
+  updateScore();
+}
+
+renderCards();
+</script>
+</body>
+</html>
